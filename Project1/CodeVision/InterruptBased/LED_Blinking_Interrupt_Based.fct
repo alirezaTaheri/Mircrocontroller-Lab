@@ -1,0 +1,3 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"LED_Blinking_Interrupt_Based.c" LINE:66
+wait DSTACK_USAGE:2 DSTACK_LEVEL:2 FILE:"LED_Blinking_Interrupt_Based.c" LINE:52
+ext_int0_isr DSTACK_USAGE:3 DSTACK_LEVEL:5 FILE:"LED_Blinking_Interrupt_Based.c" LINE:27
