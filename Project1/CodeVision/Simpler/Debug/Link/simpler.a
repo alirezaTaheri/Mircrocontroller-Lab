@@ -1,0 +1,121 @@
+;/*
+; * simpler.c
+; *
+; * Created: 10/10/2019 03:20:42 È.Ù
+; * Author: Alireza
+; */
+;
+;#include <io.h>
+;PCODE: $00000000 VOL: 0
+	#ifndef __SLEEP_DEFINED__
+;PCODE: $00000001 VOL: 0
+	#define __SLEEP_DEFINED__
+;PCODE: $00000002 VOL: 0
+	.EQU __se_bit=0x40
+;PCODE: $00000003 VOL: 0
+	.EQU __sm_mask=0xB0
+;PCODE: $00000004 VOL: 0
+	.EQU __sm_powerdown=0x20
+;PCODE: $00000005 VOL: 0
+	.EQU __sm_powersave=0x30
+;PCODE: $00000006 VOL: 0
+	.EQU __sm_standby=0xA0
+;PCODE: $00000007 VOL: 0
+	.EQU __sm_ext_standby=0xB0
+;PCODE: $00000008 VOL: 0
+	.EQU __sm_adc_noise_red=0x10
+;PCODE: $00000009 VOL: 0
+	.SET power_ctrl_reg=mcucr
+;PCODE: $0000000A VOL: 0
+	#endif
+;PCODE: $0000000B VOL: 0
+;PCODE: $0000000C VOL: 0
+;
+;#include <mega16.h>
+;#include <delay.h>
+;
+;#define ON 1
+;#define OFF 0
+;#define LED PORTA.0
+;#define WORKING PIND.0
+;#define FREQ PIND.1
+;#define DEFAULT_DELAY_TIME 100
+;
+;    // wait function that make delay, due to the status of frequency pins
+;    void wait(){
+; 0000 0015 void wait(){
+
+	.CSEG
+;PCODE: $0000000D VOL: 0
+;PCODE: $0000000E VOL: 0
+; 0000 0016         int delay_time = 0;
+; 0000 0017         if (FREQ == ON)          //maximum toggle frequency
+;PCODE: $0000000F VOL: 0
+;PCODE: $00000010 VOL: 0
+;	delay_time -> R16,R17
+;PCODE: $00000011 VOL: 0
+;PCODE: $00000012 VOL: 0
+;PCODE: $00000013 VOL: 0
+;PCODE: $00000014 VOL: 0
+;PCODE: $00000015 VOL: 0
+; 0000 0018             delay_time = DEFAULT_DELAY_TIME/4;
+;PCODE: $00000016 VOL: 0
+;PCODE: $00000017 VOL: 0
+; 0000 0019         else
+;PCODE: $00000018 VOL: 0
+;PCODE: $00000019 VOL: 0
+; 0000 001A             delay_time = DEFAULT_DELAY_TIME;
+;PCODE: $0000001A VOL: 0
+;PCODE: $0000001B VOL: 0
+; 0000 001B 
+; 0000 001C             delay_ms (delay_time);                  // Do delay
+;PCODE: $0000001C VOL: 0
+;PCODE: $0000001D VOL: 0
+;PCODE: $0000001E VOL: 0
+; 0000 001D     }
+;PCODE: $0000001F VOL: 0
+;PCODE: $00000020 VOL: 0
+;PCODE: $00000021 VOL: 0
+;
+;    void main(void){
+; 0000 001F void main(void){
+;PCODE: $00000022 VOL: 0
+; 0000 0020         LED = 0;          //initialize LED off
+;PCODE: $00000023 VOL: 0
+;PCODE: $00000024 VOL: 0
+; 0000 0021         DDRA = 0x11;      //set port A as output
+;PCODE: $00000025 VOL: 0
+;PCODE: $00000026 VOL: 0
+; 0000 0022         DDRD = 0x00;      //set port D as input
+;PCODE: $00000027 VOL: 0
+;PCODE: $00000028 VOL: 0
+; 0000 0023 
+; 0000 0024         while (1){
+;PCODE: $00000029 VOL: 0
+; 0000 0025             if (WORKING){     //Check if enable button is on
+;PCODE: $0000002A VOL: 0
+;PCODE: $0000002B VOL: 0
+;PCODE: $0000002C VOL: 0
+; 0000 0026                 LED = ~ LED;    // Toggle the LED status
+;PCODE: $0000002D VOL: 0
+;PCODE: $0000002E VOL: 0
+;PCODE: $0000002F VOL: 0
+;PCODE: $00000030 VOL: 0
+;PCODE: $00000031 VOL: 0
+;PCODE: $00000032 VOL: 0
+;PCODE: $00000033 VOL: 0
+;PCODE: $00000034 VOL: 0
+;PCODE: $00000035 VOL: 0
+;PCODE: $00000036 VOL: 0
+; 0000 0027                 wait();         //Wait for a moment
+;PCODE: $00000037 VOL: 0
+; 0000 0028             }
+; 0000 0029         }
+;PCODE: $00000038 VOL: 0
+;PCODE: $00000039 VOL: 0
+;PCODE: $0000003A VOL: 0
+; 0000 002A     }
+;PCODE: $0000003B VOL: 0
+;PCODE: $0000003C VOL: 0
+;PCODE: $0000003D VOL: 0
+;

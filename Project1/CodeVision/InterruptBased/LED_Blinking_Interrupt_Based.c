@@ -22,7 +22,8 @@ Data Stack size         : 256
 #define FREQ_1 PIND.2
 #define FREQ_2 PIND.3
 #define DEFAULT_DELAY_TIME 100
-    unsigned int digits[10] = {0x3f, 0x06, 0x5b, 0x4f};
+
+    unsigned int digits[4] = {0x3f, 0x06, 0x5b, 0x4f};
 //0x66, 0x6d, 0xfd, 0x07, 0xff, 0b01101111    
     interrupt [EXT_INT0] void ext_int0_isr(void){
     FREQ_1 ^=1;
