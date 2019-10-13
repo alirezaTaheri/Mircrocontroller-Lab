@@ -1,0 +1,28 @@
+RAM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+validationCode                                                                    0x0160       8
+digits                                                                            0x0168       8
+code                                                                              0x0170       8
+
+EEPROM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                                          Register  Size
+------------------------------------------------------------------------------------------------
+validationCodeLength                                                              R4,R5        2
+opened                                                                            R7           1
+pressed                                                                           R6           1
+counter                                                                           R8,R9        2
+codeLength                                                                        R10,R11      2
+
+FLASH Allocation [words]
+Function                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+checkCode                                                                         0x0007C     39
+timer0_ovf_isr                                                                    0x000A3     77
+ext_int0_isr                                                                      0x000F0     18
+ext_int1_isr                                                                      0x00102     41
+main                                                                              0x0012B     32

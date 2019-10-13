@@ -1,0 +1,32 @@
+RAM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+validationCode                                                                    0x0160       8
+inputLength                                                                       0x0168       2
+digits                                                                            0x016A       8
+input                                                                             0x0172       8
+
+EEPROM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                                          Register  Size
+------------------------------------------------------------------------------------------------
+validationCodeLength                                                              R4,R5        2
+opened                                                                            R7           1
+inputPressed                                                                      R6           1
+resetPressed                                                                      R9           1
+inputPressedCount                                                                 R10,R11      2
+resetPressedCount                                                                 R12,R13      2
+changeCodeMode                                                                    R8           1
+
+FLASH Allocation [words]
+Function                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+checkCode                                                                         0x0007D     41
+changeCode                                                                        0x000A6     49
+timer0_ovf_isr                                                                    0x000D7    141
+ext_int0_isr                                                                      0x00164     26
+ext_int1_isr                                                                      0x0017E     68
+main                                                                              0x001C2     32
