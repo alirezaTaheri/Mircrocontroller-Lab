@@ -5,5 +5,5 @@ Every single project has one folder which includes files and images of that proj
 We will use probably Code Vision as IDE and Proteus as simulator of AVR Microcontroller.
 
 
-#1- LED Blinking
+# 1- LED Blinking
 
