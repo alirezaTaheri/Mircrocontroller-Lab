@@ -15,6 +15,8 @@
     bool opened = false;
     bool inputPressed = false;
     bool resetPressed = false;
+    bool oneAdded = false;
+    int oneAddedCount = 0;
     int inputPressedCount = 0;
     int resetPressedCount = 0;
     bool changeCodeMode = false;
@@ -47,7 +49,7 @@
         a = 0;
         for (a = 0; a<validationCodeLength; a++)
         input[a] = -1;
-        PORTA.0 = 1;
+        PORTA.0 = 0;
         opened = false;
         changeCodeMode = false;    
     }
@@ -58,28 +60,40 @@
             inputPressedCount++;
         if (resetPressed)
             resetPressedCount++;
-            if (!changeCodeMode && inputPressed && inputPressedCount == 7){
+            if (!changeCodeMode && inputPressed && inputPressedCount == 13){
               PORTC = digits[0];
               input[inputLength] = 0;
               inputLength++;
+              PORTB.0 = 1;
+              oneAdded = true;
+              oneAddedCount = 1;
               checkCode();
               }
-              if (!changeCodeMode && inputPressed && inputPressedCount == 15){
+              if (!changeCodeMode && inputPressed && inputPressedCount == 22){
               PORTC = digits[1];              
               input[inputLength-1] = 1;
+              PORTB.0 = 1;
+              oneAdded = true;
+              oneAddedCount = 1;
               checkCode();            
               } 
               
-            if (changeCodeMode && inputPressed && inputPressedCount == 7){
+            if (changeCodeMode && inputPressed && inputPressedCount == 13){
               PORTC = digits[0];
               input[inputLength] = 0;
               inputLength++;
+              PORTB.0 = 1;
+              oneAdded = true;
+              oneAddedCount = 1;
               if (inputLength == validationCodeLength)
                 changeCode();
               }
-              if (changeCodeMode && inputPressed && inputPressedCount == 15){
+              if (changeCodeMode && inputPressed && inputPressedCount == 22){
               PORTC = digits[1];              
               input[inputLength-1] = 1;
+              PORTB.0 = 1;
+              oneAdded = true;
+              oneAddedCount = 1;
               if (inputLength == validationCodeLength)
                 changeCode();            
               }
@@ -88,10 +102,15 @@
               }  
               else if (resetPressed && resetPressedCount == 15 && changeCodeMode){
                  changeCodeMode = false;
+                 resetPressedCount = 0;
                  PORTA.0 = 0; 
               } 
               if (changeCodeMode)
                 PORTA.0 = ~PORTA.0;
+                if (oneAdded && oneAddedCount > 0){
+                PORTB.0 = 0;
+                oneAddedCount--;                       
+                }
     }     
     
     interrupt [EXT_INT0] void ext_int0_isr(void){
@@ -132,16 +151,20 @@
         for (b = 0; b<validationCodeLength; b++)
         input[b] = -1;   
         }        
-        }else if (PIND.3 == 0) resetPressed = false; 
+        }else if (PIND.3 == 0) {resetPressed = false;
+        resetPressedCount = 0;
+        } 
     }
     
 void main(void){
     DDRA = 0b00000001;
+    DDRB = 0b00000001;
     DDRD = 0b00000000;
     DDRC = 0xff;
     PORTC = 0b00000000;
     PORTC = digits[2];
     PORTA.0 = 0;
+    PORTB.0 = 0;
     TCCR0=(0<<WGM00) | (0<<COM01) | (0<<COM00) | (0<<WGM01) | (1<<CS02) | (0<<CS01) | (1<<CS00);
     TCNT0=0x06;
     OCR0=0x00;

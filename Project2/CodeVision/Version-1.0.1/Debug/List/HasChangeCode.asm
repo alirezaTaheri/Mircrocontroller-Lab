@@ -1090,11 +1090,11 @@ __DELAY_USW_LOOP:
 	.DEF _opened=R7
 	.DEF _inputPressed=R6
 	.DEF _resetPressed=R9
-	.DEF _inputPressedCount=R10
-	.DEF _inputPressedCount_msb=R11
-	.DEF _resetPressedCount=R12
-	.DEF _resetPressedCount_msb=R13
-	.DEF _changeCodeMode=R8
+	.DEF _oneAdded=R8
+	.DEF _oneAddedCount=R10
+	.DEF _oneAddedCount_msb=R11
+	.DEF _inputPressedCount=R12
+	.DEF _inputPressedCount_msb=R13
 
 	.CSEG
 	.ORG 0x00
@@ -1268,6 +1268,8 @@ __GLOBAL_INI_END:
 ;    bool opened = false;
 ;    bool inputPressed = false;
 ;    bool resetPressed = false;
+;    bool oneAdded = false;
+;    int oneAddedCount = 0;
 ;    int inputPressedCount = 0;
 ;    int resetPressedCount = 0;
 ;    bool changeCodeMode = false;
@@ -1277,15 +1279,15 @@ __GLOBAL_INI_END:
 ;
 ;
 ;    void checkCode(){
-; 0000 001A void checkCode(){
+; 0000 001C void checkCode(){
 
 	.CSEG
 _checkCode:
 ; .FSTART _checkCode
-; 0000 001B     bool correct = true;
-; 0000 001C     int a = 0;
-; 0000 001D     //if (inputLength == validationCodeLength)
-; 0000 001E     for (a = 0; a<validationCodeLength ; a++){
+; 0000 001D     bool correct = true;
+; 0000 001E     int a = 0;
+; 0000 001F     //if (inputLength == validationCodeLength)
+; 0000 0020     for (a = 0; a<validationCodeLength ; a++){
 	CALL __SAVELOCR4
 ;	correct -> R17
 ;	a -> R18,R19
@@ -1295,7 +1297,7 @@ _checkCode:
 _0x7:
 	__CPWRR 18,19,4,5
 	BRGE _0x8
-; 0000 001F         if (validationCode[a] != input[a])
+; 0000 0021         if (validationCode[a] != input[a])
 	MOVW R30,R18
 	LDI  R26,LOW(_validationCode)
 	LDI  R27,HIGH(_validationCode)
@@ -1308,26 +1310,26 @@ _0x7:
 	CP   R30,R0
 	CPC  R31,R1
 	BREQ _0x9
-; 0000 0020             correct = false;
+; 0000 0022             correct = false;
 	LDI  R17,LOW(0)
-; 0000 0021     }// else correct = false;
+; 0000 0023     }// else correct = false;
 _0x9:
 	__ADDWRN 18,19,1
 	RJMP _0x7
 _0x8:
-; 0000 0022         if (correct){
+; 0000 0024         if (correct){
 	CPI  R17,0
 	BREQ _0xA
-; 0000 0023           PORTC = digits[3];
+; 0000 0025           PORTC = digits[3];
 	__GETB1MN _digits,6
 	OUT  0x15,R30
-; 0000 0024           PORTA.0 = 1;
+; 0000 0026           PORTA.0 = 1;
 	SBI  0x1B,0
-; 0000 0025           opened = true;
+; 0000 0027           opened = true;
 	LDI  R30,LOW(1)
 	MOV  R7,R30
-; 0000 0026         }
-; 0000 0027     }
+; 0000 0028         }
+; 0000 0029     }
 _0xA:
 	CALL __LOADLOCR4
 	ADIW R28,4
@@ -1335,11 +1337,11 @@ _0xA:
 ; .FEND
 ;
 ;    void changeCode(){
-; 0000 0029 void changeCode(){
+; 0000 002B void changeCode(){
 _changeCode:
 ; .FSTART _changeCode
-; 0000 002A     int a =0;
-; 0000 002B         for (a = 0; a<validationCodeLength;a++)
+; 0000 002C     int a =0;
+; 0000 002D         for (a = 0; a<validationCodeLength;a++)
 	ST   -Y,R17
 	ST   -Y,R16
 ;	a -> R16,R17
@@ -1348,7 +1350,7 @@ _changeCode:
 _0xE:
 	__CPWRR 16,17,4,5
 	BRGE _0xF
-; 0000 002C             validationCode[a] = input[a];
+; 0000 002E             validationCode[a] = input[a];
 	MOVW R30,R16
 	LDI  R26,LOW(_validationCode)
 	LDI  R27,HIGH(_validationCode)
@@ -1366,223 +1368,303 @@ _0xE:
 	__ADDWRN 16,17,1
 	RJMP _0xE
 _0xF:
-; 0000 002D inputPressedCount = 0;
+; 0000 002F inputPressedCount = 0;
 	CALL SUBOPT_0x2
-; 0000 002E         inputLength = 0;
-; 0000 002F         a = 0;
-; 0000 0030         for (a = 0; a<validationCodeLength; a++)
+; 0000 0030         inputLength = 0;
+; 0000 0031         a = 0;
+; 0000 0032         for (a = 0; a<validationCodeLength; a++)
 	__GETWRN 16,17,0
 _0x11:
 	__CPWRR 16,17,4,5
 	BRGE _0x12
-; 0000 0031         input[a] = -1;
+; 0000 0033         input[a] = -1;
 	MOVW R30,R16
 	CALL SUBOPT_0x1
 	CALL SUBOPT_0x3
 	__ADDWRN 16,17,1
 	RJMP _0x11
 _0x12:
-; 0000 0032 PORTA.0 = 0;
+; 0000 0034 PORTA.0 = 0;
 	CBI  0x1B,0
-; 0000 0033         opened = false;
+; 0000 0035         opened = false;
 	CLR  R7
-; 0000 0034         changeCodeMode = false;
-	CLR  R8
-; 0000 0035     }
+; 0000 0036         changeCodeMode = false;
+	LDI  R30,LOW(0)
+	STS  _changeCodeMode,R30
+; 0000 0037     }
 	LD   R16,Y+
 	LD   R17,Y+
 	RET
 ; .FEND
 ;
 ;    interrupt [TIM0_OVF] void timer0_ovf_isr(void){
-; 0000 0037 interrupt [10] void timer0_ovf_isr(void){
+; 0000 0039 interrupt [10] void timer0_ovf_isr(void){
 _timer0_ovf_isr:
 ; .FSTART _timer0_ovf_isr
-	ST   -Y,R0
-	ST   -Y,R1
-	ST   -Y,R15
-	ST   -Y,R22
-	ST   -Y,R23
-	ST   -Y,R24
-	ST   -Y,R25
-	ST   -Y,R26
-	ST   -Y,R27
-	ST   -Y,R30
-	ST   -Y,R31
-	IN   R30,SREG
-	ST   -Y,R30
-; 0000 0038         TCNT0=0xB2;
+	CALL SUBOPT_0x4
+; 0000 003A         TCNT0=0xB2;
 	LDI  R30,LOW(178)
 	OUT  0x32,R30
-; 0000 0039         if (inputPressed)
+; 0000 003B         if (inputPressed)
 	TST  R6
 	BREQ _0x15
-; 0000 003A             inputPressedCount++;
-	MOVW R30,R10
-	ADIW R30,1
-	MOVW R10,R30
-; 0000 003B         if (resetPressed)
-_0x15:
-	TST  R9
-	BREQ _0x16
-; 0000 003C             resetPressedCount++;
+; 0000 003C             inputPressedCount++;
 	MOVW R30,R12
 	ADIW R30,1
 	MOVW R12,R30
-; 0000 003D             if (!changeCodeMode && inputPressed && inputPressedCount == 7){
+; 0000 003D         if (resetPressed)
+_0x15:
+	TST  R9
+	BREQ _0x16
+; 0000 003E             resetPressedCount++;
+	LDI  R26,LOW(_resetPressedCount)
+	LDI  R27,HIGH(_resetPressedCount)
+	CALL SUBOPT_0x5
+; 0000 003F             if (!changeCodeMode && inputPressed && inputPressedCount == 13){
 _0x16:
-	TST  R8
+	LDS  R30,_changeCodeMode
+	CPI  R30,0
 	BRNE _0x18
 	TST  R6
 	BREQ _0x18
-	LDI  R30,LOW(7)
-	LDI  R31,HIGH(7)
-	CP   R30,R10
-	CPC  R31,R11
+	CALL SUBOPT_0x6
 	BREQ _0x19
 _0x18:
 	RJMP _0x17
 _0x19:
-; 0000 003E               PORTC = digits[0];
-	CALL SUBOPT_0x4
-; 0000 003F               input[inputLength] = 0;
-	CALL SUBOPT_0x5
-; 0000 0040               inputLength++;
-; 0000 0041               checkCode();
-	RCALL _checkCode
-; 0000 0042               }
-; 0000 0043               if (!changeCodeMode && inputPressed && inputPressedCount == 15){
+; 0000 0040               PORTC = digits[0];
+	CALL SUBOPT_0x7
+; 0000 0041               input[inputLength] = 0;
+	CALL SUBOPT_0x8
+; 0000 0042               inputLength++;
+; 0000 0043               PORTB.0 = 1;
+	CALL SUBOPT_0x9
+; 0000 0044               oneAdded = true;
+; 0000 0045               oneAddedCount = 1;
+; 0000 0046               checkCode();
+; 0000 0047               }
+; 0000 0048               if (!changeCodeMode && inputPressed && inputPressedCount == 22){
 _0x17:
-	TST  R8
-	BRNE _0x1B
+	LDS  R30,_changeCodeMode
+	CPI  R30,0
+	BRNE _0x1D
 	TST  R6
-	BREQ _0x1B
-	LDI  R30,LOW(15)
-	LDI  R31,HIGH(15)
-	CP   R30,R10
-	CPC  R31,R11
-	BREQ _0x1C
-_0x1B:
-	RJMP _0x1A
-_0x1C:
-; 0000 0044               PORTC = digits[1];
-	CALL SUBOPT_0x6
-; 0000 0045               input[inputLength-1] = 1;
+	BREQ _0x1D
+	LDI  R30,LOW(22)
+	LDI  R31,HIGH(22)
+	CP   R30,R12
+	CPC  R31,R13
+	BREQ _0x1E
+_0x1D:
+	RJMP _0x1C
+_0x1E:
+; 0000 0049               PORTC = digits[1];
+	CALL SUBOPT_0xA
+; 0000 004A               input[inputLength-1] = 1;
 	LDI  R30,LOW(1)
 	LDI  R31,HIGH(1)
 	ST   X+,R30
 	ST   X,R31
-; 0000 0046               checkCode();
-	RCALL _checkCode
-; 0000 0047               }
-; 0000 0048 
-; 0000 0049             if (changeCodeMode && inputPressed && inputPressedCount == 7){
-_0x1A:
-	TST  R8
-	BREQ _0x1E
-	TST  R6
-	BREQ _0x1E
-	LDI  R30,LOW(7)
-	LDI  R31,HIGH(7)
-	CP   R30,R10
-	CPC  R31,R11
-	BREQ _0x1F
-_0x1E:
-	RJMP _0x1D
-_0x1F:
-; 0000 004A               PORTC = digits[0];
-	CALL SUBOPT_0x4
-; 0000 004B               input[inputLength] = 0;
-	CALL SUBOPT_0x5
-; 0000 004C               inputLength++;
-; 0000 004D               if (inputLength == validationCodeLength)
-	CALL SUBOPT_0x7
-	BRNE _0x20
-; 0000 004E                 changeCode();
-	RCALL _changeCode
+; 0000 004B               PORTB.0 = 1;
+	CALL SUBOPT_0x9
+; 0000 004C               oneAdded = true;
+; 0000 004D               oneAddedCount = 1;
+; 0000 004E               checkCode();
 ; 0000 004F               }
-_0x20:
-; 0000 0050               if (changeCodeMode && inputPressed && inputPressedCount == 15){
-_0x1D:
-	TST  R8
+; 0000 0050 
+; 0000 0051             if (changeCodeMode && inputPressed && inputPressedCount == 13){
+_0x1C:
+	LDS  R30,_changeCodeMode
+	CPI  R30,0
 	BREQ _0x22
 	TST  R6
 	BREQ _0x22
-	LDI  R30,LOW(15)
-	LDI  R31,HIGH(15)
-	CP   R30,R10
-	CPC  R31,R11
+	CALL SUBOPT_0x6
 	BREQ _0x23
 _0x22:
 	RJMP _0x21
 _0x23:
-; 0000 0051               PORTC = digits[1];
-	CALL SUBOPT_0x6
-; 0000 0052               input[inputLength-1] = 1;
+; 0000 0052               PORTC = digits[0];
+	CALL SUBOPT_0x7
+; 0000 0053               input[inputLength] = 0;
+	CALL SUBOPT_0x8
+; 0000 0054               inputLength++;
+; 0000 0055               PORTB.0 = 1;
+	CALL SUBOPT_0xB
+; 0000 0056               oneAdded = true;
+; 0000 0057               oneAddedCount = 1;
+; 0000 0058 
+; 0000 0059               }
+; 0000 005A               if (changeCodeMode && inputPressed && inputPressedCount == 22){
+_0x21:
+	LDS  R30,_changeCodeMode
+	CPI  R30,0
+	BREQ _0x27
+	TST  R6
+	BREQ _0x27
+	LDI  R30,LOW(22)
+	LDI  R31,HIGH(22)
+	CP   R30,R12
+	CPC  R31,R13
+	BREQ _0x28
+_0x27:
+	RJMP _0x26
+_0x28:
+; 0000 005B               PORTC = digits[1];
+	CALL SUBOPT_0xA
+; 0000 005C               input[inputLength-1] = 1;
 	LDI  R30,LOW(1)
 	LDI  R31,HIGH(1)
 	ST   X+,R30
 	ST   X,R31
-; 0000 0053               if (inputLength == validationCodeLength)
-	CALL SUBOPT_0x7
-	BRNE _0x24
-; 0000 0054                 changeCode();
-	RCALL _changeCode
-; 0000 0055               }
-_0x24:
-; 0000 0056               if (resetPressed && resetPressedCount == 15 && !changeCodeMode){
-_0x21:
-	TST  R9
-	BREQ _0x26
-	LDI  R30,LOW(15)
-	LDI  R31,HIGH(15)
-	CP   R30,R12
-	CPC  R31,R13
-	BRNE _0x26
-	TST  R8
-	BREQ _0x27
-_0x26:
-	RJMP _0x25
-_0x27:
-; 0000 0057                  changeCodeMode = true;
-	LDI  R30,LOW(1)
-	MOV  R8,R30
-; 0000 0058               }
-; 0000 0059               else if (resetPressed && resetPressedCount == 15 && changeCodeMode){
-	RJMP _0x28
-_0x25:
-	TST  R9
-	BREQ _0x2A
-	LDI  R30,LOW(15)
-	LDI  R31,HIGH(15)
-	CP   R30,R12
-	CPC  R31,R13
-	BRNE _0x2A
-	TST  R8
+; 0000 005D               PORTB.0 = 1;
+	CALL SUBOPT_0xB
+; 0000 005E               oneAdded = true;
+; 0000 005F               oneAddedCount = 1;
+; 0000 0060               if (inputLength == validationCodeLength)
+	CALL SUBOPT_0xC
 	BRNE _0x2B
-_0x2A:
-	RJMP _0x29
+; 0000 0061                 changeCode();
+	RCALL _changeCode
+; 0000 0062               }
 _0x2B:
-; 0000 005A                  changeCodeMode = false;
-	CLR  R8
-; 0000 005B                  PORTA.0 = 0;
-	CBI  0x1B,0
-; 0000 005C               }
-; 0000 005D               if (changeCodeMode)
-_0x29:
-_0x28:
-	TST  R8
+; 0000 0063               if (resetPressed && resetPressedCount == 15 && !changeCodeMode){
+_0x26:
+	TST  R9
+	BREQ _0x2D
+	LDS  R26,_resetPressedCount
+	LDS  R27,_resetPressedCount+1
+	SBIW R26,15
+	BRNE _0x2D
+	LDS  R30,_changeCodeMode
+	CPI  R30,0
 	BREQ _0x2E
-; 0000 005E                 PORTA.0 = ~PORTA.0;
-	SBIS 0x1B,0
-	RJMP _0x2F
-	CBI  0x1B,0
-	RJMP _0x30
-_0x2F:
-	SBI  0x1B,0
-_0x30:
-; 0000 005F     }
+_0x2D:
+	RJMP _0x2C
 _0x2E:
+; 0000 0064                  changeCodeMode = true;
+	LDI  R30,LOW(1)
+	STS  _changeCodeMode,R30
+; 0000 0065               }
+; 0000 0066               else if (resetPressed && resetPressedCount == 15 && changeCodeMode){
+	RJMP _0x2F
+_0x2C:
+	TST  R9
+	BREQ _0x31
+	LDS  R26,_resetPressedCount
+	LDS  R27,_resetPressedCount+1
+	SBIW R26,15
+	BRNE _0x31
+	LDS  R30,_changeCodeMode
+	CPI  R30,0
+	BRNE _0x32
+_0x31:
+	RJMP _0x30
+_0x32:
+; 0000 0067                  changeCodeMode = false;
+	LDI  R30,LOW(0)
+	STS  _changeCodeMode,R30
+; 0000 0068                  resetPressedCount = 0;
+	CALL SUBOPT_0xD
+; 0000 0069                  PORTA.0 = 0;
+	CBI  0x1B,0
+; 0000 006A               }
+; 0000 006B               if (changeCodeMode)
+_0x30:
+_0x2F:
+	LDS  R30,_changeCodeMode
+	CPI  R30,0
+	BREQ _0x35
+; 0000 006C                 PORTA.0 = ~PORTA.0;
+	SBIS 0x1B,0
+	RJMP _0x36
+	CBI  0x1B,0
+	RJMP _0x37
+_0x36:
+	SBI  0x1B,0
+_0x37:
+; 0000 006D                 if (oneAdded && oneAddedCount > 0){
+_0x35:
+	TST  R8
+	BREQ _0x39
+	CLR  R0
+	CP   R0,R10
+	CPC  R0,R11
+	BRLT _0x3A
+_0x39:
+	RJMP _0x38
+_0x3A:
+; 0000 006E                 PORTB.0 = 0;
+	CBI  0x18,0
+; 0000 006F                 oneAddedCount--;
+	MOVW R30,R10
+	SBIW R30,1
+	MOVW R10,R30
+; 0000 0070                 }
+; 0000 0071     }
+_0x38:
+	RJMP _0x5F
+; .FEND
+;
+;    interrupt [EXT_INT0] void ext_int0_isr(void){
+; 0000 0073 interrupt [2] void ext_int0_isr(void){
+_ext_int0_isr:
+; .FSTART _ext_int0_isr
+	CALL SUBOPT_0x4
+; 0000 0074     if (PIND.2 == 1){
+	SBIS 0x10,2
+	RJMP _0x3D
+; 0000 0075         if (!changeCodeMode){
+	LDS  R30,_changeCodeMode
+	CPI  R30,0
+	BREQ _0x5D
+; 0000 0076         inputPressed = true;
+; 0000 0077         }else if (changeCodeMode) inputPressed = true;}
+	CPI  R30,0
+	BREQ _0x40
+_0x5D:
+	LDI  R30,LOW(1)
+	MOV  R6,R30
+_0x40:
+; 0000 0078         else {
+	RJMP _0x41
+_0x3D:
+; 0000 0079         if (!changeCodeMode){
+	LDS  R30,_changeCodeMode
+	CPI  R30,0
+	BREQ _0x5E
+; 0000 007A         inputPressed = false;
+; 0000 007B         inputPressedCount = 0;
+; 0000 007C         PORTC = digits[2];
+; 0000 007D         }else if (changeCodeMode){
+	CPI  R30,0
+	BREQ _0x44
+; 0000 007E         if (inputPressedCount > 13)
+	CALL SUBOPT_0x6
+	BRGE _0x45
+; 0000 007F             if (inputLength == validationCodeLength)
+	CALL SUBOPT_0xC
+	BRNE _0x46
+; 0000 0080                 changeCode();
+	RCALL _changeCode
+; 0000 0081             inputPressed = false;
+_0x46:
+_0x45:
+_0x5E:
+	CLR  R6
+; 0000 0082             inputPressedCount = 0;
+	CLR  R12
+	CLR  R13
+; 0000 0083             PORTC = digits[2];
+	__GETB1MN _digits,4
+	OUT  0x15,R30
+; 0000 0084         }
+; 0000 0085             }
+_0x44:
+_0x41:
+; 0000 0086 
+; 0000 0087     }
+_0x5F:
 	LD   R30,Y+
 	OUT  SREG,R30
 	LD   R31,Y+
@@ -1599,62 +1681,8 @@ _0x2E:
 	RETI
 ; .FEND
 ;
-;    interrupt [EXT_INT0] void ext_int0_isr(void){
-; 0000 0061 interrupt [2] void ext_int0_isr(void){
-_ext_int0_isr:
-; .FSTART _ext_int0_isr
-	ST   -Y,R30
-	IN   R30,SREG
-	ST   -Y,R30
-; 0000 0062     if (PIND.2 == 1){
-	SBIS 0x10,2
-	RJMP _0x31
-; 0000 0063         if (!changeCodeMode){
-	TST  R8
-	BREQ _0x4D
-; 0000 0064         inputPressed = true;
-; 0000 0065         }else if (changeCodeMode) inputPressed = true;}
-	TST  R8
-	BREQ _0x34
-_0x4D:
-	LDI  R30,LOW(1)
-	MOV  R6,R30
-_0x34:
-; 0000 0066         else {
-	RJMP _0x35
-_0x31:
-; 0000 0067         if (!changeCodeMode){
-	TST  R8
-	BREQ _0x4E
-; 0000 0068         inputPressed = false;
-; 0000 0069         inputPressedCount = 0;
-; 0000 006A         PORTC = digits[2];
-; 0000 006B         }else if (changeCodeMode){
-	TST  R8
-	BREQ _0x38
-; 0000 006C             inputPressed = false;
-_0x4E:
-	CLR  R6
-; 0000 006D             inputPressedCount = 0;
-	CLR  R10
-	CLR  R11
-; 0000 006E             PORTC = digits[2];
-	__GETB1MN _digits,4
-	OUT  0x15,R30
-; 0000 006F         }
-; 0000 0070             }
-_0x38:
-_0x35:
-; 0000 0071 
-; 0000 0072     }
-	LD   R30,Y+
-	OUT  SREG,R30
-	LD   R30,Y+
-	RETI
-; .FEND
-;
 ;    interrupt [EXT_INT1] void ext_int1_isr(void){
-; 0000 0074 interrupt [3] void ext_int1_isr(void){
+; 0000 0089 interrupt [3] void ext_int1_isr(void){
 _ext_int1_isr:
 ; .FSTART _ext_int1_isr
 	ST   -Y,R26
@@ -1663,76 +1691,82 @@ _ext_int1_isr:
 	ST   -Y,R31
 	IN   R30,SREG
 	ST   -Y,R30
-; 0000 0075     int b = 0;
-; 0000 0076         if (PIND.3 == 1){
+; 0000 008A     int b = 0;
+; 0000 008B         if (PIND.3 == 1){
 	ST   -Y,R17
 	ST   -Y,R16
 ;	b -> R16,R17
 	__GETWRN 16,17,0
 	SBIS 0x10,3
-	RJMP _0x39
-; 0000 0077         if (!changeCodeMode){
-	TST  R8
-	BRNE _0x3A
-; 0000 0078         resetPressed = true;
+	RJMP _0x47
+; 0000 008C         if (!changeCodeMode){
+	LDS  R30,_changeCodeMode
+	CPI  R30,0
+	BRNE _0x48
+; 0000 008D         resetPressed = true;
 	LDI  R30,LOW(1)
 	MOV  R9,R30
-; 0000 0079         inputPressedCount = 0;
+; 0000 008E         inputPressedCount = 0;
 	CALL SUBOPT_0x2
-; 0000 007A         inputLength = 0;
-; 0000 007B         for (b = 0; b<validationCodeLength; b++)
-_0x3C:
+; 0000 008F         inputLength = 0;
+; 0000 0090         for (b = 0; b<validationCodeLength; b++)
+_0x4A:
 	__CPWRR 16,17,4,5
-	BRGE _0x3D
-; 0000 007C         input[b] = -1;
+	BRGE _0x4B
+; 0000 0091         input[b] = -1;
 	MOVW R30,R16
 	CALL SUBOPT_0x1
 	CALL SUBOPT_0x3
 	__ADDWRN 16,17,1
-	RJMP _0x3C
-_0x3D:
-; 0000 007D PORTA.0 = 0;
+	RJMP _0x4A
+_0x4B:
+; 0000 0092 PORTA.0 = 0;
 	CBI  0x1B,0
-; 0000 007E         opened = false;
+; 0000 0093         opened = false;
 	CLR  R7
-; 0000 007F         }
-; 0000 0080         else if (changeCodeMode){
-	RJMP _0x40
-_0x3A:
-	TST  R8
-	BREQ _0x41
-; 0000 0081         resetPressed = true;
+; 0000 0094         }
+; 0000 0095         else if (changeCodeMode){
+	RJMP _0x4E
+_0x48:
+	LDS  R30,_changeCodeMode
+	CPI  R30,0
+	BREQ _0x4F
+; 0000 0096         resetPressed = true;
 	LDI  R30,LOW(1)
 	MOV  R9,R30
-; 0000 0082         resetPressedCount = 0;
-	CLR  R12
-	CLR  R13
-; 0000 0083         inputLength = 0;
+; 0000 0097         resetPressedCount = 0;
+	CALL SUBOPT_0xD
+; 0000 0098         inputLength = 0;
 	LDI  R30,LOW(0)
 	STS  _inputLength,R30
 	STS  _inputLength+1,R30
-; 0000 0084         for (b = 0; b<validationCodeLength; b++)
+; 0000 0099         for (b = 0; b<validationCodeLength; b++)
 	__GETWRN 16,17,0
-_0x43:
+_0x51:
 	__CPWRR 16,17,4,5
-	BRGE _0x44
-; 0000 0085         input[b] = -1;
+	BRGE _0x52
+; 0000 009A         input[b] = -1;
 	MOVW R30,R16
 	CALL SUBOPT_0x1
 	CALL SUBOPT_0x3
 	__ADDWRN 16,17,1
-	RJMP _0x43
-_0x44:
-; 0000 0086 }
-; 0000 0087         }else if (PIND.3 == 0) resetPressed = false;
-_0x41:
-_0x40:
-	RJMP _0x45
-_0x39:
-	SBIS 0x10,3
+	RJMP _0x51
+_0x52:
+; 0000 009B }
+; 0000 009C         }else if (PIND.3 == 0) {resetPressed = false;
+_0x4F:
+_0x4E:
+	RJMP _0x53
+_0x47:
+	SBIC 0x10,3
+	RJMP _0x54
 	CLR  R9
-; 0000 0088     }
-_0x45:
+; 0000 009D         resetPressedCount = 0;
+	CALL SUBOPT_0xD
+; 0000 009E         }
+; 0000 009F     }
+_0x54:
+_0x53:
 	LD   R16,Y+
 	LD   R17,Y+
 	LD   R30,Y+
@@ -1745,62 +1779,66 @@ _0x45:
 ; .FEND
 ;
 ;void main(void){
-; 0000 008A void main(void){
+; 0000 00A1 void main(void){
 _main:
 ; .FSTART _main
-; 0000 008B     DDRA = 0b00000001;
+; 0000 00A2     DDRA = 0b00000001;
 	LDI  R30,LOW(1)
 	OUT  0x1A,R30
-; 0000 008C     DDRD = 0b00000000;
+; 0000 00A3     DDRB = 0b00000001;
+	OUT  0x17,R30
+; 0000 00A4     DDRD = 0b00000000;
 	LDI  R30,LOW(0)
 	OUT  0x11,R30
-; 0000 008D     DDRC = 0xff;
+; 0000 00A5     DDRC = 0xff;
 	LDI  R30,LOW(255)
 	OUT  0x14,R30
-; 0000 008E     PORTC = 0b00000000;
+; 0000 00A6     PORTC = 0b00000000;
 	LDI  R30,LOW(0)
 	OUT  0x15,R30
-; 0000 008F     PORTC = digits[2];
+; 0000 00A7     PORTC = digits[2];
 	__GETB1MN _digits,4
 	OUT  0x15,R30
-; 0000 0090     PORTA.0 = 0;
+; 0000 00A8     PORTA.0 = 0;
 	CBI  0x1B,0
-; 0000 0091     TCCR0=(0<<WGM00) | (0<<COM01) | (0<<COM00) | (0<<WGM01) | (1<<CS02) | (0<<CS01) | (1<<CS00);
+; 0000 00A9     PORTB.0 = 0;
+	CBI  0x18,0
+; 0000 00AA     TCCR0=(0<<WGM00) | (0<<COM01) | (0<<COM00) | (0<<WGM01) | (1<<CS02) | (0<<CS01) | (1<<CS00);
 	LDI  R30,LOW(5)
 	OUT  0x33,R30
-; 0000 0092     TCNT0=0x06;
+; 0000 00AB     TCNT0=0x06;
 	LDI  R30,LOW(6)
 	OUT  0x32,R30
-; 0000 0093     OCR0=0x00;
+; 0000 00AC     OCR0=0x00;
 	LDI  R30,LOW(0)
 	OUT  0x3C,R30
-; 0000 0094     TIMSK=(0<<OCIE2) | (0<<TOIE2) | (0<<TICIE1) | (0<<OCIE1A) | (0<<OCIE1B) | (0<<TOIE1) | (0<<OCIE0) | (1<<TOIE0);
+; 0000 00AD     TIMSK=(0<<OCIE2) | (0<<TOIE2) | (0<<TICIE1) | (0<<OCIE1A) | (0<<OCIE1B) | (0<<TOIE1) | (0<<OCIE0) | (1<<TOIE0);
 	LDI  R30,LOW(1)
 	OUT  0x39,R30
-; 0000 0095     GICR|=(1<<INT1) | (1<<INT0) | (0<<INT2);
+; 0000 00AE     GICR|=(1<<INT1) | (1<<INT0) | (0<<INT2);
 	IN   R30,0x3B
 	ORI  R30,LOW(0xC0)
 	OUT  0x3B,R30
-; 0000 0096     MCUCR=(0<<ISC11) | (1<<ISC10) | (0<<ISC01) | (1<<ISC00);
+; 0000 00AF     MCUCR=(0<<ISC11) | (1<<ISC10) | (0<<ISC01) | (1<<ISC00);
 	LDI  R30,LOW(5)
 	OUT  0x35,R30
-; 0000 0097     MCUCSR=(0<<ISC2);
+; 0000 00B0     MCUCSR=(0<<ISC2);
 	LDI  R30,LOW(0)
 	OUT  0x34,R30
-; 0000 0098     GIFR=(1<<INTF1) | (1<<INTF0) | (0<<INTF2);
+; 0000 00B1     GIFR=(1<<INTF1) | (1<<INTF0) | (0<<INTF2);
 	LDI  R30,LOW(192)
 	OUT  0x3A,R30
-; 0000 0099 
-; 0000 009A     #asm("sei");
+; 0000 00B2 
+; 0000 00B3     #asm("sei");
 	sei
-; 0000 009B while (1){
-_0x49:
-; 0000 009C 
-; 0000 009D     }
-	RJMP _0x49
-; 0000 009E }
-_0x4C:
-	RJMP _0x4C
+; 0000 00B4 while (1){
+_0x59:
+; 0000 00B5 
+; 0000 00B6     }
+	RJMP _0x59
+; 0000 00B7 }
+_0x5C:
+	RJMP _0x5C
 ; .FEND
 ;
 	#ifndef __SLEEP_DEFINED__
@@ -1824,6 +1862,10 @@ _0x4C:
 	.DSEG
 _validationCode:
 	.BYTE 0x8
+_resetPressedCount:
+	.BYTE 0x2
+_changeCodeMode:
+	.BYTE 0x1
 _inputLength:
 	.BYTE 0x2
 _digits:
@@ -1848,8 +1890,8 @@ SUBOPT_0x1:
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:4 WORDS
 SUBOPT_0x2:
-	CLR  R10
-	CLR  R11
+	CLR  R12
+	CLR  R13
 	LDI  R30,LOW(0)
 	STS  _inputLength,R30
 	STS  _inputLength+1,R30
@@ -1864,22 +1906,25 @@ SUBOPT_0x3:
 	ST   X,R31
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:4 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:8 WORDS
 SUBOPT_0x4:
-	LDS  R30,_digits
-	OUT  0x15,R30
-	LDS  R30,_inputLength
-	LDS  R31,_inputLength+1
-	RJMP SUBOPT_0x1
+	ST   -Y,R0
+	ST   -Y,R1
+	ST   -Y,R15
+	ST   -Y,R22
+	ST   -Y,R23
+	ST   -Y,R24
+	ST   -Y,R25
+	ST   -Y,R26
+	ST   -Y,R27
+	ST   -Y,R30
+	ST   -Y,R31
+	IN   R30,SREG
+	ST   -Y,R30
+	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:6 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:3 WORDS
 SUBOPT_0x5:
-	LDI  R30,LOW(0)
-	LDI  R31,HIGH(0)
-	ST   X+,R30
-	ST   X,R31
-	LDI  R26,LOW(_inputLength)
-	LDI  R27,HIGH(_inputLength)
 	LD   R30,X+
 	LD   R31,X+
 	ADIW R30,1
@@ -1887,8 +1932,44 @@ SUBOPT_0x5:
 	ST   -X,R30
 	RET
 
-;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:5 WORDS
+;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:1 WORDS
 SUBOPT_0x6:
+	LDI  R30,LOW(13)
+	LDI  R31,HIGH(13)
+	CP   R30,R12
+	CPC  R31,R13
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:4 WORDS
+SUBOPT_0x7:
+	LDS  R30,_digits
+	OUT  0x15,R30
+	LDS  R30,_inputLength
+	LDS  R31,_inputLength+1
+	RJMP SUBOPT_0x1
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:3 WORDS
+SUBOPT_0x8:
+	LDI  R30,LOW(0)
+	LDI  R31,HIGH(0)
+	ST   X+,R30
+	ST   X,R31
+	LDI  R26,LOW(_inputLength)
+	LDI  R27,HIGH(_inputLength)
+	RJMP SUBOPT_0x5
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:3 WORDS
+SUBOPT_0x9:
+	SBI  0x18,0
+	LDI  R30,LOW(1)
+	MOV  R8,R30
+	LDI  R30,LOW(1)
+	LDI  R31,HIGH(1)
+	MOVW R10,R30
+	JMP  _checkCode
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:5 WORDS
+SUBOPT_0xA:
 	__GETB1MN _digits,2
 	OUT  0x15,R30
 	LDS  R30,_inputLength
@@ -1897,11 +1978,28 @@ SUBOPT_0x6:
 	RJMP SUBOPT_0x1
 
 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
-SUBOPT_0x7:
+SUBOPT_0xB:
+	SBI  0x18,0
+	LDI  R30,LOW(1)
+	MOV  R8,R30
+	LDI  R30,LOW(1)
+	LDI  R31,HIGH(1)
+	MOVW R10,R30
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
+SUBOPT_0xC:
 	LDS  R26,_inputLength
 	LDS  R27,_inputLength+1
 	CP   R4,R26
 	CPC  R5,R27
+	RET
+
+;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:3 WORDS
+SUBOPT_0xD:
+	LDI  R30,LOW(0)
+	STS  _resetPressedCount,R30
+	STS  _resetPressedCount+1,R30
 	RET
 
 
