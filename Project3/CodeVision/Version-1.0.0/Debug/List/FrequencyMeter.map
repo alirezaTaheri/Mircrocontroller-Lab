@@ -1,0 +1,47 @@
+RAM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+str                                                                               0x016C     255
+currentTime                                                                       0x026B       4
+freq                                                                              0x026F       4
+digits                                                                            0x0273      22
+_base_y                                                                           0x0289       4
+_lcd_x                                                                            0x028D       1
+_lcd_y                                                                            0x028E       1
+_lcd_maxx                                                                         0x028F       1
+_seed                                                                             0x0290       4
+
+EEPROM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                                          Register  Size
+------------------------------------------------------------------------------------------------
+previousRising                                                                    R4,R5        2
+timerOverflow                                                                     R6,R7        2
+rov_counter                                                                       R9           1
+counter                                                                           R8           1
+starting_edge                                                                     R10,R11      2
+ending_edge                                                                       R12,R13      2
+
+FLASH Allocation [words]
+Function                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+timer1_ovf_isr                                                                    0x00086     16
+timer1_capt_isr                                                                   0x00096     77
+main                                                                              0x000E3     75
+_lcd_write_nibble_G100                                                            0x0012E     20
+_lcd_write_data                                                                   0x00142     12
+lcd_gotoxy                                                                        0x0014E     17
+lcd_clear                                                                         0x0015F     14
+lcd_putchar                                                                       0x0016D     32
+lcd_puts                                                                          0x0018D     17
+lcd_init                                                                          0x0019E     47
+get_buff_G101                                                                     0x001CD     45
+_scanf_G101                                                                       0x001FA    322
+sscanf                                                                            0x0033C     43
+ltoa                                                                              0x00367     91
+isdigit                                                                           0x003C2      9
+isspace                                                                           0x003CB     11
+isxdigit                                                                          0x003D6     15

@@ -1,0 +1,15 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"IR_Sernsor.c" LINE:154
+showADCValue DSTACK_USAGE:7 DSTACK_LEVEL:7 FILE:"IR_Sernsor.c" LINE:180
+showStringOnRow DSTACK_USAGE:4 DSTACK_LEVEL:11 FILE:"IR_Sernsor.c" LINE:191
+lcd_puts DSTACK_USAGE:3 DSTACK_LEVEL:14 FILE:"F:\CodeVision\lib\alcd.lib" LINE:279
+lcd_putchar DSTACK_USAGE:1 DSTACK_LEVEL:15 FILE:"F:\CodeVision\lib\alcd.lib" LINE:265
+lcd_gotoxy DSTACK_USAGE:2 DSTACK_LEVEL:17 FILE:"F:\CodeVision\lib\alcd.lib" LINE:247
+_lcd_write_data DSTACK_USAGE:1 DSTACK_LEVEL:18 FILE:"F:\CodeVision\lib\alcd.lib" LINE:161
+_lcd_write_nibble DSTACK_USAGE:1 DSTACK_LEVEL:19 FILE:"F:\CodeVision\lib\alcd.lib" LINE:139
+timer0_ovf_isr DSTACK_USAGE:12 DSTACK_LEVEL:31 FILE:"IR_Sernsor.c" LINE:44
+showStringOnRow DSTACK_USAGE:4 DSTACK_LEVEL:35 FILE:"IR_Sernsor.c" LINE:191
+lcd_puts DSTACK_USAGE:3 DSTACK_LEVEL:38 FILE:"F:\CodeVision\lib\alcd.lib" LINE:279
+lcd_putchar DSTACK_USAGE:1 DSTACK_LEVEL:39 FILE:"F:\CodeVision\lib\alcd.lib" LINE:265
+lcd_gotoxy DSTACK_USAGE:2 DSTACK_LEVEL:41 FILE:"F:\CodeVision\lib\alcd.lib" LINE:247
+_lcd_write_data DSTACK_USAGE:1 DSTACK_LEVEL:42 FILE:"F:\CodeVision\lib\alcd.lib" LINE:161
+_lcd_write_nibble DSTACK_USAGE:1 DSTACK_LEVEL:43 FILE:"F:\CodeVision\lib\alcd.lib" LINE:139

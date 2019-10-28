@@ -1,0 +1,111 @@
+/*
+ * FrequencyMeter.c
+ *
+ * Created: 19/10/2019 09:18:07 Þ.Ù
+ * Author: Alireza
+ */
+
+#include <io.h>
+// Alphanumeric LCD functions
+#include <alcd.h> 
+#include <delay.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+       #include <mega16.h> 
+
+char str[255];
+unsigned int previousRising;
+unsigned long elapsedTime;
+unsigned int timerOverflow;
+unsigned long currentTime;
+unsigned long int freq; 
+
+unsigned char rov_counter,counter;
+unsigned int starting_edge,ending_edge;
+
+unsigned int digits[11] = {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0xfd, 0x07, 0xff, 0b01101111, 0b00000000}; 
+// Timer1 overflow interrupt service routine
+interrupt [TIM1_OVF] void timer1_ovf_isr(void)
+{
+// Reinitialize Timer1 value
+TCNT1H=0xD8F0 >> 8;
+TCNT1L=0xD8F0 & 0xff;     
+//TCNT1H=0x00;;
+//TCNT1L=0x00;;
+timerOverflow++;
+        
+}
+int c ;
+// Timer1 input capture interrupt service routine
+interrupt [TIM1_CAPT] void timer1_capt_isr(void)
+{    
+    currentTime = 256*ICR1H + ICR1L;
+    PORTC = digits[currentTime % 10];
+    freq =  186*221;
+   /* elapsedTime = currentTime + timerOverflow * 65536 - previousRising;
+    c = ICR1H;
+    freq = elapsedTime;//8000000;
+    timerOverflow = 0;
+    previousRising = currentTime;
+     */  
+           
+}
+
+        char* a; 
+        int x;
+void main(void)
+{
+DDRC = 0xff;    
+
+TCCR1A=(0<<COM1A1) | (0<<COM1A0) | (0<<COM1B1) | (0<<COM1B0) | (0<<WGM11) | (0<<WGM10);
+TCCR1B=(0<<ICNC1) | (1<<ICES1) | (0<<WGM13) | (0<<WGM12) | (0<<CS12) | (0<<CS11) | (1<<CS10);
+TCNT1H=0x00;
+TCNT1L=0x00;
+ICR1H=0x00;
+ICR1L=0x00;
+OCR1AH=0x00;
+OCR1AL=0x00;
+OCR1BH=0x00;
+OCR1BL=0x00;
+
+// Timer(s)/Counter(s) Interrupt(s) initialization
+TIMSK=(0<<OCIE2) | (0<<TOIE2) | (1<<TICIE1) | (0<<OCIE1A) | (0<<OCIE1B) | (1<<TOIE1) | (0<<OCIE0) | (0<<TOIE0);
+
+// Alphanumeric LCD initialization
+// Connections are specified in the
+// Project|Configure|C Compiler|Libraries|Alphanumeric LCD menu:
+// RS - PORTB Bit 0
+// RD - PORTB Bit 1
+// EN - PORTB Bit 2
+// D4 - PORTB Bit 4
+// D5 - PORTB Bit 5
+// D6 - PORTB Bit 6
+// D7 - PORTB Bit 7
+// Characters/line: 16
+lcd_init(16);
+
+        
+        lcd_gotoxy(0,0);
+        delay_ms(50);
+        lcd_puts("Frequency: ");
+        delay_ms(50);   
+        
+// Global enable interrupts
+#asm("sei")
+ PORTC = digits[10];
+while (1){
+
+        lcd_gotoxy(0,1);
+        delay_ms(50); 
+        //sprintf(str, "%d", 1/elapsedTime);
+        //sprintf(str, "%d", TCNT1+timerOverflow*65536);
+        ltoa(freq, str);
+        sscanf(str, "%d", &freq);
+        //ltoa(timerOverflow, str);
+        //lcd_putsf(str);
+        //strncpy(a,str, 1);      
+        lcd_puts(str);
+        delay_ms(50);
+    }
+}

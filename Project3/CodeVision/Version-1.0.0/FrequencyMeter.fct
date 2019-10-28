@@ -1,0 +1,5 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"FrequencyMeter.c" LINE:57
+sscanf DSTACK_USAGE:9 DSTACK_LEVEL:9 FILE:"F:\CodeVision\lib\stdio.lib" LINE:1888
+_scanf DSTACK_USAGE:18 DSTACK_LEVEL:27 FILE:"F:\CodeVision\lib\stdio.lib" LINE:1612
+isspace DSTACK_USAGE:1 DSTACK_LEVEL:28 FILE:"F:\CodeVision\lib\ctype.lib" LINE:153
+timer1_capt_isr DSTACK_USAGE:11 DSTACK_LEVEL:39 FILE:"FrequencyMeter.c" LINE:41

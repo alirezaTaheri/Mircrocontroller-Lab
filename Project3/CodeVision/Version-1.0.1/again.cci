@@ -1,0 +1,13 @@
+VERSION:3 SOURCE_TIMESTAMP:4F58944E
+NODE:I LEVEL:0 LINE:7 "F:\CodeVision\inc\mega16.h"
+NODE:I LEVEL:0 LINE:8 "F:\CodeVision\inc\alcd.h"
+NODE:I LEVEL:0 LINE:9 "F:\CodeVision\inc\stdlib.h"
+NODE:V LEVEL:0 LINE:10 "str -> RAM:????"
+NODE:M LEVEL:0 LINE:11 "period_out"
+NODE:V LEVEL:0 LINE:12 "ov_counter -> R5"
+NODE:V LEVEL:0 LINE:12 "starting_edge -> R6,R7"
+NODE:V LEVEL:0 LINE:12 "ending_edge -> R8,R9"
+NODE:V LEVEL:0 LINE:12 "clocks -> R10,R11"
+NODE:F LEVEL:0 LINE:13 "timer1_ovf_isr(void)"
+NODE:F LEVEL:0 LINE:14 "timer1_capt_isr(void)"
+NODE:F LEVEL:0 LINE:20 "main(void)"

@@ -1,0 +1,54 @@
+RAM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+menuItems                                                                         0x0225       6
+adcMenuItems                                                                      0x022B       6
+calibrationMenuItems                                                              0x0231       6
+floorValues                                                                       0x0237       6
+adcLastValue                                                                      0x023D       6
+calibrationShowingItem                                                            0x0243       2
+nextKeyPressedCount                                                               0x0245       2
+nextKeyPressed                                                                    0x0247       1
+confirmKeyPressedCount                                                            0x0248       2
+confirmKeyPressed                                                                 0x024A       1
+_base_y                                                                           0x024B       4
+_lcd_x                                                                            0x024F       1
+_lcd_y                                                                            0x0250       1
+_lcd_maxx                                                                         0x0251       1
+_seed                                                                             0x0252       4
+
+EEPROM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                                          Register  Size
+------------------------------------------------------------------------------------------------
+selectedItem                                                                      R4,R5        2
+showingItem                                                                       R6,R7        2
+adcSelectedItem                                                                   R8,R9        2
+adcShowingItem                                                                    R10,R11      2
+calibrationSelectedItem                                                           R12,R13      2
+
+FLASH Allocation [words]
+Function                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+timer0_ovf_isr                                                                    0x00104    213
+ext_int0_isr                                                                      0x001D9     15
+ext_int1_isr                                                                      0x001E8     16
+read_adc                                                                          0x001F8     14
+main                                                                              0x00206     35
+showADCValue                                                                      0x00229     50
+showStringOnRow                                                                   0x0025B     18
+handleLED                                                                         0x0026D     53
+isNextKeyDebounced                                                                0x002A2     14
+isConfirmKeyDebounced                                                             0x002B0     14
+init                                                                              0x002BE     32
+_lcd_write_nibble_G100                                                            0x002DE     20
+_lcd_write_data                                                                   0x002F2     12
+lcd_gotoxy                                                                        0x002FE     17
+lcd_clear                                                                         0x0030F     14
+lcd_putchar                                                                       0x0031D     32
+lcd_puts                                                                          0x0033D     17
+lcd_init                                                                          0x0034E     47
+itoa                                                                              0x0037D     46

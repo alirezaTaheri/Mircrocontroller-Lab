@@ -1,0 +1,2 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"signalGenerator.c" LINE:17
+timer0_ovf_isr DSTACK_USAGE:1 DSTACK_LEVEL:1 FILE:"signalGenerator.c" LINE:9
