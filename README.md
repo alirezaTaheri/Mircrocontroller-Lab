@@ -12,3 +12,6 @@ We will use probably Code Vision as IDE and Proteus as simulator of AVR Microcon
 
 # 3- Frequency Meter
 
+# 4- ADC Infrared Sensor
+
+
