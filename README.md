@@ -14,4 +14,7 @@ We will use probably Code Vision as IDE and Proteus as simulator of AVR Microcon
 
 # 4- ADC Infrared Sensor
 
+# 5- Control DC Motor By L293D IC
+
+# 6- Line Follower Robot Using Arduino
 
