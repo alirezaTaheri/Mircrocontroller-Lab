@@ -1,7 +1,7 @@
 # Mircrocontroller Lab
 
 
-This repository consist of mini projects and final project of Microcontroller Lab course.
+This repository consists of mini projects and final project of Microcontroller Lab course.
 Every single project has one folder which includes files and images of that project.
 We will use probably Code Vision as IDE and Proteus as simulator of AVR Microcontroller.
 
